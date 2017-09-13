@@ -14,6 +14,9 @@ License for the specific language governing permissions and limitations
 under the License.
 %>
 <% var language_tabs = current_page.data.language_tabs || []; %>
+<% if (current_page.data.includes) for (var include in current_page.data.includes) { %>
+  <% page_content += partial(current_page.data.includes[include]) %>
+<% } %>
 <!doctype html>
 <html lang="en">
   <head>
@@ -64,7 +67,12 @@ under the License.
 	  	<ul class="toc-list-h1">
         <% for (var h1 of toc_data(page_content)) { %>
           <li>
-            <a href="#<%= h1.id %>" class="toc-h1 toc-link" data-title="<%= h1.content %>"><%= h1.content %></a>
+            <% if (h1.url) { %>
+              <a href="<%= h1.url %>" class="toc-h1 toc-link" data-title="<%= h1.content %>"><%= h1.content %></a>
+            <% } else { %>
+              <a href="#<%= h1.id %>" class="toc-h1 toc-link" data-title="<%= h1.content %>"><%= h1.content %></a>
+            <% } %>
+            
             <% if (h1.children && (h1.children.length > 0)) { %>
               <ul class="toc-list-h2">
                 <% for (var h2 of h1.children) { %>
@@ -90,9 +98,6 @@ under the License.
       <div class="dark-box"></div>
       <div class="content">
         <%- page_content %>
-        <% if (current_page.data.includes) { for (var include in current_page.data.includes) { %>
-          <%- partial(current_page.data.includes[include]) %>
-        <% } %>
       </div>
       <div class="dark-box">
         <% if (language_tabs) %>
@@ -105,7 +110,6 @@ under the License.
               <% } %>
             <% } %>
           </div>
-        <% } %>
       </div>
     </div>
   </body>

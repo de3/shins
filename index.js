@@ -71,12 +71,12 @@ function stylesheet_link_tag(stylesheet, media) {
             fs.writeFileSync(target, fs.readFileSync(source));
         }
     }
-    var include = '<link rel="stylesheet" media="' + media + '" href="pub/css/' + stylesheet + '.css">';
+    var include = '<link rel="stylesheet" media="' + media + '" href="/pub/css/' + stylesheet + '.css">';
     if (globalOptions.customCss) {
         if ((stylesheet != 'print') && (stylesheet != 'screen')) {
             stylesheet = 'theme';
         }
-        include += '\n    <link rel="stylesheet" media="' + media + '" href="pub/css/' + stylesheet + '_overrides.css">';
+        include += '\n    <link rel="stylesheet" media="' + media + '" href="/pub/css/' + stylesheet + '_overrides.css">';
     }
     return include;
 };
@@ -137,12 +137,19 @@ function render(inputStr, options, callback) {
 		locals.toc_data = function(content) {
 			var result = [];
 			var h1;
+            $ = cheerio.load(content);
 			$(':header').each(function(e){
 				var tag = $(this).get(0).tagName.toLowerCase();
 				var entry = {};
 				if (tag == 'h1') {
-					entry.id = $(this).attr('id');
-					entry.content = $(this).text();
+                    if ($('a', this).text()) {
+                        entry.id = $('a', this).text().toLowerCase().split(' ').join('-');
+                        entry.content = $('a', this).text();
+                        entry.url = $('a', this).attr('href');
+                    } else {
+                        entry.id = $(this).attr('id');
+                        entry.content = $(this).text();
+                    }
 					entry.children = [];
 					h1 = entry;
 					result.push(entry);

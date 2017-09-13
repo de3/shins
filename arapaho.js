@@ -41,6 +41,10 @@ function check(req,res,fpath) {
 app.get('/', function(req,res) {
 	check(req,res,'index.html');
 });
+app.get('/apis/:serviceName', function(req,res) {
+	var filename = 'apis/' + req.params.serviceName + '.html';
+	res.render(path.join(__dirname, filename));
+});
 app.get('*.html', function(req,res) {
 	check(req,res,req.path);
 });
